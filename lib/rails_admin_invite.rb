@@ -12,13 +12,18 @@ module RailsAdmin
         RailsAdmin::Config::Actions.register(self)
 
         register_instance_option :visible? do
-          #TODO: Don't hard code Admin
-          authorized? && bindings[:abstract_model].to_s == "Admin"
+          return false unless authorized?
+
+          invitable_models = Devise.mappings.map do |scope, mapping|
+            mapping.class_name if mapping.modules.include?(:invitable)
+          end.compact
+
+          invitable_models.include?(bindings[:abstract_model].to_s)
         end
 
         register_instance_option :controller do
           Proc.new do
-            if request.get? # NEW
+            if request.get?
               @object = @abstract_model.new
               @authorization_adapter && @authorization_adapter.attributes_for(:new, @abstract_model).each do |name, value|
                 @object.send("#{name}=", value)
@@ -30,15 +35,14 @@ module RailsAdmin
                 format.html { render @action.template_name }
                 format.js   { render @action.template_name, :layout => false }
               end
-            elsif request.post? # INVITE
-              #TODO: find a way to get to AR class from @abstract_model
-              @object = Admin.invite!(params[:admin], current_user)
+            elsif request.post?
+              @object = @abstract_model.model.invite!(params[@abstract_model.to_param], _current_user)
               if @object.errors.empty?
                 notice = I18n.t("admin.actions.invite.sent", email: @object.email)
                 if params[:return_to]
                   redirect_to(params[:return_to], notice: notice)
                 else
-                  redirect_to(invite_path(:model_name => @abstract_model.to_param, :id => @object.id), notice: notice)
+                  redirect_to(invite_path(:model_name => @abstract_model.to_param), notice: notice)
                 end
               else
                 handle_save_error
@@ -46,7 +50,6 @@ module RailsAdmin
             end
           end
         end
-
       end
     end
   end
