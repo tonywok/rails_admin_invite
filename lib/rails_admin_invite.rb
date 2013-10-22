@@ -45,7 +45,7 @@ module RailsAdmin
                   redirect_to(invite_path(:model_name => @abstract_model.to_param), notice: notice)
                 end
               else
-                handle_save_error
+                handle_save_error :whereto => :invite
               end
             end
           end
