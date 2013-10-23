@@ -3,8 +3,9 @@ en:
   admin:
     actions:
       invite:
-        title: "Invite Admin"
+        title: "Invite %{model_label}"
         menu: "Invite %{model_label}"
         breadcrumb: "Invite"
         link: "Invite"
         sent: "An invitation email has been sent to %{email}."
+        done: "invited"
