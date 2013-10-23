@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rails_admin_invite (0.0.4)
+    rails_admin_invite (0.0.5)
 
 GEM
   remote: https://rubygems.org/
