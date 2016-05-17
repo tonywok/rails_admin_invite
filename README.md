@@ -1,3 +1,5 @@
+# THIS REPOSITORY IS NOT MAINTAINED
+
 # RailsAdminInvite
 
 This gem is for use with RailsAdmin and Devise Invitable. I wanted to be able to invite Admin
